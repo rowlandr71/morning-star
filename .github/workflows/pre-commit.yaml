@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  TERRAFORM_DIR: terraform
+
 jobs:
   pre-commit-checks:
     name: Pre-commit checks
@@ -21,6 +24,8 @@ jobs:
       - name: Terraform min/max versions
         id: minMax
         uses: clowdhaus/terraform-min-max@v1.2.7
+        with:
+          directory: ${{ env.TERRAFORM_DIR }}
 
       - name: Pre-commit Terraform ${{ steps.minMax.outputs.maxVersion }}
         uses: clowdhaus/terraform-composite-actions/pre-commit@v1.8.3

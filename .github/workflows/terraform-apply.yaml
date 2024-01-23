@@ -66,11 +66,11 @@ jobs:
       - name: Terraform Init
         id: init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        continue-on-error: true
         run: terraform init
 
       - name: Set Terraform Workspace
         id: set-workspace
+        working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
           echo "Workspace: ${{ matrix.environment }}"
 
@@ -78,9 +78,11 @@ jobs:
 
       - name: Download Plan
         id: download-plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
         run: aws s3 cp s3://${{ env.TERRAFORM_PLAN_BUCKET }}/tf-plan/${{ env.COMMIT_SHA }}/${{ matrix.environment }}/tfplan tfplan
 
       - name: Terraform Apply
         id: apply
+        working-directory: ${{ env.TERRAFORM_DIR }}
         run: |
           terraform apply "tfplan"

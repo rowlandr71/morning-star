@@ -112,13 +112,11 @@ jobs:
       - name: Terraform Init
         id: init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        continue-on-error: true
         run: terraform init
 
       - name: Set Terraform Workspace
         id: set-workspace
         working-directory: ${{ env.TERRAFORM_DIR }}
-        continue-on-error: true
         run: |
           echo "Workspace: ${{ matrix.environment }}"
 
@@ -128,21 +126,19 @@ jobs:
         id: varfiles
         run: |
           if [ "${{ matrix.environment }}" != "default" ]; then
-            OUTPUT="-var-file=common.tfvars -var-file=${{ matrix.environment }}.tfvars"
+            OUTPUT="-var-file=varfiles/common.tfvars -var-file=varfiles/${{ matrix.environment }}.tfvars"
             echo "varfiles=$OUTPUT" >> $GITHUB_ENV
           fi
 
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.TERRAFORM_DIR }}
-        continue-on-error: true
-        env:
-          TF_VAR_assume_role_arn: ${{ env.AWS_ROLE_TO_ASSUME }}
         run: |
           terraform plan ${{ env.varfiles }} -out=tfplan-${{ env.COMMIT_SHA }}
 
       - name: Upload Plan Artefacts
         id: upload-plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
         run: aws s3 cp tfplan-${{ env.COMMIT_SHA }} s3://${{ env.TERRAFORM_PLAN_BUCKET }}/tf-plan/${{ env.COMMIT_SHA }}/${{ matrix.environment }}/tfplan
 
   comment-on-pr:

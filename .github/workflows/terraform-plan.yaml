@@ -117,6 +117,8 @@ jobs:
 
       - name: Set Terraform Workspace
         id: set-workspace
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        continue-on-error: true
         run: |
           echo "Workspace: ${{ matrix.environment }}"
 
@@ -132,6 +134,10 @@ jobs:
 
       - name: Terraform Plan
         id: plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        continue-on-error: true
+        env:
+          TF_VAR_assume_role_arn: ${{ env.AWS_ROLE_TO_ASSUME }}
         run: |
           terraform plan ${{ env.varfiles }} -out=tfplan-${{ env.COMMIT_SHA }}
 

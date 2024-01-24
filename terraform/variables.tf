@@ -31,3 +31,19 @@ variable "assume_role_external_id" {
   description = "Extenal ID associated with the \"assume_role_arn\"."
   default     = ""
 }
+
+#------------------------------------------------------------------------------
+# EKS
+#------------------------------------------------------------------------------
+variable "cluster_version" {
+  type        = string
+  description = "EKS Cluster version"
+  default     = "1.28"
+}
+
+variable "eks_admin_users" {
+  description = "IAM users (username) to add to the eks admins group."
+  type        = list(string)
+
+  default = []
+}

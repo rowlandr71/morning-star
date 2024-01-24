@@ -139,7 +139,7 @@ data "aws_iam_policy_document" "kms_policy" {
     ]
     principals {
       type        = "Service"
-      identifiers = ["logs.${var.region}.amazonaws.com"]
+      identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
     }
     resources = ["*"]
   }
@@ -162,7 +162,7 @@ data "aws_iam_policy_document" "kms_policy" {
     }
     condition {
       test     = "StringEquals"
-      values   = ["secretsmanager.${var.region}.amazonaws.com"]
+      values   = ["secretsmanager.${data.aws_region.current.name}.amazonaws.com"]
       variable = "kms:ViaService"
     }
     resources = ["*"]
@@ -188,4 +188,29 @@ module "aws_load_balancer_controller_irsa_role" {
       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
   }
+
+  tags = local.tags
+}
+
+#------------------------------------------------------------------------------
+# CLUSTER AUTOSCALER
+#------------------------------------------------------------------------------
+module "cluster_autoscaler_irsa_role" {
+  #checkov:skip=CKV_TF_1: "Ensure Terraform module sources use a commit hash" | This is delibrate.
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.33.0"
+
+  role_name                        = "${local.name}-cluster-autoscaler"
+  attach_cluster_autoscaler_policy = true
+  cluster_autoscaler_cluster_names = [module.eks.cluster_name]
+
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:cluster-autoscaler"]
+    }
+  }
+
+  tags = local.tags
 }

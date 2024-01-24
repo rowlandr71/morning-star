@@ -6,6 +6,7 @@ on:
     types: [closed]
     branches:
       - main
+      - dev
     paths:
       - "**.tf"
       - "**.tfvars"
@@ -27,6 +28,7 @@ env:
 jobs:
   get-environments:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     outputs:
       envs: ${{ steps.set-envs.outputs.envs }}
     steps:

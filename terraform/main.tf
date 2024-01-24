@@ -28,6 +28,6 @@ data "aws_region" "current" {}
 #------------------------------------------------------------------------------
 # Supporting Resources
 #------------------------------------------------------------------------------
-resource "random_pet" "this" {
-  length = 2
-}
+# resource "random_pet" "this" {
+#   length = 2
+# }

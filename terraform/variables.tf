@@ -38,7 +38,7 @@ variable "assume_role_external_id" {
 variable "cluster_version" {
   type        = string
   description = "EKS Cluster version"
-  default     = "1.28"
+  default     = "1.29"
 }
 
 variable "eks_admin_users" {

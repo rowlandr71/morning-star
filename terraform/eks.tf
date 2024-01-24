@@ -77,8 +77,7 @@ module "eks" {
   ]
 
   node_security_group_tags = local.tags
-
-  tags = local.tags
+  tags                     = local.tags
 }
 
 # https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2009

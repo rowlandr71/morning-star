@@ -179,8 +179,7 @@ module "aws_load_balancer_controller_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.33.0"
 
-  role_name = "${local.name}-aws-load-balancer-controller"
-
+  role_name                              = "${local.name}-aws-load-balancer-controller"
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {

@@ -43,7 +43,7 @@ jobs:
           # Determine the environment
           ENVIRONMENT=${MAPPINGS[${{ env.BRANCH_NAME }}]:-${MAPPINGS["DEFAULT"]}}
 
-          OUTPUT=$(jq -n --arg environment "$ENVIRONMENT" '{include: [{environment: $environment}]}')
+          OUTPUT=$(jq -c -n --arg environment "$ENVIRONMENT" '{include: [{environment: $environment}]}')
 
           echo "Environment: $ENVIRONMENT"
           echo "Output: $OUTPUT"

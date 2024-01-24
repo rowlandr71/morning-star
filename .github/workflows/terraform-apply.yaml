@@ -6,6 +6,7 @@ on:
     types: [closed]
     branches:
       - main
+      - dev
     paths:
       - "**.tf"
       - "**.tfvars"
@@ -19,21 +20,35 @@ env:
   TERRAFORM_VERSION: 1.7.0
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+  TERRAFORM_ENVIRONMENTS: "main=prod,dev=dev,DEFAULT=dev"
   TERRAFORM_PLAN_BUCKET: ${{ secrets.TERRAFORM_PLAN_BUCKET }} # S3 bucket to store/ retrieve plan files.
-  TERRAFORM_ENVIRONMENTS: ${{ secrets.TERRAFORM_ENVIRONMENTS != '' && secrets.TERRAFORM_ENVIRONMENTS || 'default' }} # Define environments here, e.g: "dev,uat,prod"
   COMMIT_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+  BRANCH_NAME: ${{ github.event.pull_request.base.ref }}
 
 jobs:
   get-environments:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     outputs:
       envs: ${{ steps.set-envs.outputs.envs }}
     steps:
       - id: set-envs
         run: |
-          OUTPUT=$(echo '${{ env.TERRAFORM_ENVIRONMENTS }}' | jq -R -c '{include: (split(",") | map({environment: .}))}')
+          # Convert TERRAFORM_ENVIRONMENTS into an associative array
+          declare -A MAPPINGS
+          IFS=',' read -ra PAIRS <<< "${{ env.TERRAFORM_ENVIRONMENTS }}"
+          for pair in "${PAIRS[@]}"; do
+            IFS='=' read -ra KV <<< "$pair"
+            MAPPINGS[${KV[0]}]=${KV[1]}
+          done
 
-          echo $OUTPUT
+          # Determine the environment
+          ENVIRONMENT=${MAPPINGS[${{ env.BRANCH_NAME }}]:-${MAPPINGS["DEFAULT"]}}
+
+          OUTPUT=$(jq -c -n --arg environment "$ENVIRONMENT" '{include: [{environment: $environment}]}')
+
+          echo "Environment: $ENVIRONMENT"
+          echo "Output: $OUTPUT"
           echo "envs=$OUTPUT" >> $GITHUB_OUTPUT
 
   apply:
@@ -50,7 +65,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: main
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2

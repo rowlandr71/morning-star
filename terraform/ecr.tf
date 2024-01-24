@@ -2,6 +2,8 @@
 # ECR Repository
 #------------------------------------------------------------------------------
 module "ecr_repository" {
+  #checkov:skip=CKV_TF_1: "Ensure Terraform module sources use a commit hash" | This is delibrate.
+
   source  = "terraform-aws-modules/ecr/aws"
   version = "~> 1.0"
 

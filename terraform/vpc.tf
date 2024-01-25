@@ -44,8 +44,9 @@ module "vpc" {
   }
 
   private_subnet_tags = {
-    "scope"                           = "private"
-    "kubernetes.io/role/internal-elb" = 1
+    "scope"                                       = "private"
+    "kubernetes.io/role/internal-elb"             = 1
+    "kubernetes.io/cluster/${local.name}-cluster" = "owned"
   }
 
   tags = local.tags

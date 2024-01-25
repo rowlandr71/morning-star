@@ -192,6 +192,7 @@ module "aws_load_balancer_controller_irsa_role" {
   tags = local.tags
 }
 
+
 #------------------------------------------------------------------------------
 # CLUSTER AUTOSCALER
 #------------------------------------------------------------------------------
@@ -209,6 +210,30 @@ module "cluster_autoscaler_irsa_role" {
     ex = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:cluster-autoscaler"]
+    }
+  }
+
+  tags = local.tags
+}
+
+
+#------------------------------------------------------------------------------
+# EXTERNAL DNS
+#------------------------------------------------------------------------------
+module "external_dns_irsa_role" {
+  #checkov:skip=CKV_TF_1: "Ensure Terraform module sources use a commit hash" | This is delibrate.
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.33.0"
+
+  role_name                     = "${local.name}-external-dns"
+  attach_external_dns_policy    = true
+  external_dns_hosted_zone_arns = [data.aws_route53_zone.this.arn]
+
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:external-dns"]
     }
   }
 

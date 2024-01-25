@@ -6,6 +6,8 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - timeoff-management-application
 
 permissions:
   contents: read
@@ -19,19 +21,7 @@ env:
   ECR_REPO: ${{ github.ref == 'refs/heads/main' && secrets.PROD_ECR_REPO || secrets.DEV_ECR_REPO }}
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: google-github-actions/release-please-action@v4
-        with:
-          release-type: simple
-
   docker-release:
-    needs: release-please
-    if: needs.release-please.outputs.release_created
     runs-on: ubuntu-latest
     permissions:
       contents: "read"

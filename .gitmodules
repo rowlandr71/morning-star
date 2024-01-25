@@ -1,0 +1,3 @@
+[submodule "timeoff-management-application"]
+	path = timeoff-management-application
+	url = https://github.com/joeyomi/timeoff-management-application.git

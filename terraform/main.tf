@@ -9,6 +9,8 @@ locals {
   name_pascal_case = replace(title(replace(local.name, "-", " ")), " ", "")
   azs              = slice(data.aws_availability_zones.available.names, 0, 3)
 
+  domain_name = terraform.workspace == "dev" ? "dev.morning-star.${data.aws_route53_zone.this.name}" : "morning-star.${data.aws_route53_zone.this.name}"
+
   tags = {
     project     = var.prefix
     environment = var.environment,

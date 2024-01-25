@@ -22,7 +22,7 @@ env:
   COMMIT_SHA: ${{ github.sha }}
 
 jobs:
-  docker-release:
+  docker-release-basic:
     runs-on: ubuntu-latest
     permissions:
       contents: "read"
@@ -35,12 +35,6 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           submodules: recursive
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.3.0
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -64,14 +58,3 @@ jobs:
           docker tag ${{ env.ECR_REPO }}:latest ${{ env.ECR_REPO }}:${{ env.COMMIT_SHA }}
           docker push ${{ env.ECR_REPO }}:latest
           docker push ${{ env.ECR_REPO }}:${{ env.COMMIT_SHA }}
-
-      - name: Sign the images with GitHub OIDC Token
-        env:
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes ${images}

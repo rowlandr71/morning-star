@@ -62,15 +62,15 @@ resource "helm_release" "argocd" {
               id: github
               name: GitHub
               config:
-                clientID: ${data.aws_secretsmanager_secret_version.argocd_oidc_client_id.secret_string}
-                clientSecret: ${data.aws_secretsmanager_secret_version.argocd_oidc_client_secret.secret_string}
-                redirectURI: https://argocd.${local.domain_name}/dex/callback
+                clientID: $dex-oauth:clientID
+                clientSecret: $dex-oauth:clientSecret
+                redirectURI: https://argocd.${local.domain_name}/api/dex/callback
                 loadAllGroups: true
       rbac:
         policy.default: role:readonly
         scopes: "[groups, email]"
         policy.csv: |
-          g, joeyomi, role:admin
+          g, joseph.oyomi11@gmail.com, role:admin
   EOF
   ]
 }

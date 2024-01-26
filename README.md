@@ -151,4 +151,4 @@ helm install timeoff joeyomi/timeoff-management-application
 
 ## Further additions
 
-- External Application Database
+- External MySQL Database

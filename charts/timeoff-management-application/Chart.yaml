@@ -2,7 +2,7 @@ annotations:
   licenses: MIT
 apiVersion: v2
 appVersion: 0.10.0
-version: 0.1.3
+version: 0.1.4
 name: timeoff-management-application
 description: "Web application for managing employee absences."
 home: https://github.com/timeoff-management/timeoff-management-application

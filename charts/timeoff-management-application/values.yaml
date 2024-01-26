@@ -8,7 +8,7 @@
 ## @param global.storageClass Global StorageClass for Persistent Volume(s)
 ##
 global:
-  imageRegistry: "273661173608.dkr.ecr.us-east-1.amazonaws.com"
+  imageRegistry: ""
   ## E.g.
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
@@ -66,8 +66,8 @@ commonAnnotations: {}
 ## @param image.pullSecrets Image pull secrets
 ##
 image:
-  registry: "273661173608.dkr.ecr.us-east-1.amazonaws.com"
-  repository: "mstar-dev-timeoff"
+  registry: ""
+  repository: "273661173608.dkr.ecr.us-east-1.amazonaws.com/mstar-dev-timeoff"
   tag: latest
   digest: ""
   ## Specify a imagePullPolicy

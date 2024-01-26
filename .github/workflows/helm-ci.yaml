@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "helm/charts/**"
+      - "charts/**"
   push:
     branches:
       - "main"
     paths:
-      - "helm/charts/**"
+      - "charts/**"
 
 permissions:
   contents: read
@@ -60,13 +60,13 @@ jobs:
 
       - name: Build chart dependencies
         run: |
-          for dir in helm/charts/*/
+          for dir in charts/*/
           do
               (cd ${dir}; helm dependency build)
           done
 
       - name: Run chart-testing (lint)
-        run: ct lint --config helm/charts/ct-lint.yaml
+        run: ct lint --config charts/ct-lint.yaml
 
   lint-docs:
     runs-on: ubuntu-latest
@@ -123,7 +123,7 @@ jobs:
         run: |
           mkdir manifests
 
-          for dir in helm/charts/*/
+          for dir in charts/*/
           do
               helm template "${dir}" > "manifests/$(basename $dir).yaml"
           done
@@ -168,7 +168,7 @@ jobs:
         uses: helm/chart-testing-action@v2.6.0
 
       - name: Run chart install
-        run: ct install --config helm/charts/ct-lint.yaml
+        run: ct install --config charts/ct-lint.yaml
 
   # Catch-all required check for test matrix
   test-success:

@@ -68,7 +68,7 @@ commonAnnotations: {}
 image:
   registry: ""
   repository: "273661173608.dkr.ecr.us-east-1.amazonaws.com/mstar-dev-timeoff"
-  tag: latest
+  tag: ""
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
